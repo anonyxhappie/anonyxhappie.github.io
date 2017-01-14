@@ -277,7 +277,7 @@ a {
 footer {
   background: rgba(0, 0, 0, 0.1);
   width: 100%;
-  /*border-top: 1px dashed #b5e853;*/
+  border-top: 1px dashed #b5e853;
   padding: 20px 0;
   margin: 300px 0 0 0;
 }

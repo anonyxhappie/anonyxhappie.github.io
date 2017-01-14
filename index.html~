@@ -30,7 +30,7 @@
       </section>
     </div>
 
-   <footer>
+   <div class="footer">
       <section id="downloads">
         <a href="https://plus.google.com/+AkshaySaini0007" class="btn btn-google"><span class="icon"></span>View on Google</a>
       	<a href="https://facebook.com/anonyxhappie" class="btn btn-facebook"><span class="icon"></span>View on Facebook</a>
@@ -38,7 +38,7 @@
       	<a href="http://twitter.com/anonyxhappie" class="btn btn-twitter"><span class="icon"></span>View on Twitter</a>
       	<a href="https://www.instagram.com/anonyxhappie" class="btn btn-instagram"><span class="icon"></span>View on Instagram</a>
       </section>
-    </footer>
+    </div>
 
     
   </body>
