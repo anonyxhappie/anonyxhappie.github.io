@@ -1,0 +1,103 @@
+*{
+    box-sizing: border-box;
+}
+
+body{
+    background-color: #92bde7;
+    color: #485e74;
+    line-height: 1.6;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 1em;
+}
+
+.container{
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 1em;
+}
+
+ul{
+    list-style: none;
+    padding: 0;
+}
+
+.event{
+    text-align: center;
+}
+
+.event span{
+    color: #fff;
+}
+
+.wrapper{
+    box-shadow: 0 0 20px 0 rgba(72, 94, 116, 0.7);
+}
+
+.wrapper > *{
+    padding: 1em;
+}
+
+.speaker-info{
+    background-color: #c9e6ff;
+}
+
+.speaker-info h3, .speaker-info ul{
+    text-align: center;
+    margin: 0 0 1rem o;
+}
+
+.feedback{
+    background: #f9feff;
+}
+
+/* Form Style*/
+
+.feedback form{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 20px;
+}
+
+.feedback form p{
+    margin: 0;
+}
+
+.feedback form .full{
+    grid-column: 1 / 3;
+}
+
+.feedback form input, .feedback form textarea{
+    width: 100%;
+    padding: 1em;
+    border: 1px solid #c9e6ff;
+}
+
+.feedback form .button{
+    background: #c9e6ff;
+    border: 0;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+.feedback form .button:hover, .feedback form .button:focus{
+    background: #92bde7;
+    color: #fff;
+    transition: background-color,color 1s ease-out;
+} 
+
+/* Large Screens */
+@media(min-width:700px){
+    .wrapper{
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+    }
+
+    .wrapper > *{
+        padding: 2em;
+    }
+
+    .speaker-info h3, .speaker-info ul, .event{
+        text-align: left;
+    }
+}
