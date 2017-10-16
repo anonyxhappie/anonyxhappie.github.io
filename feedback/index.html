@@ -11,7 +11,7 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="event"><i><img src="google-logo.png" alt="google-logo"></i><span>DevFest</span> Feedback</h1>
+        <h1 class="event"><i><img src="google-logo.png" alt="google-logo"></i><span>Dev<i>F</i>est </span> Feedback</h1>
         <div class="wrapper animated bounceInLeft">
             <div class="speaker-info">
                 <h3><i><img src="firebase-logo.png" alt="firebase-logo"></i>Firebase <span>Kickstart</span></h3>
@@ -22,16 +22,19 @@
                 </ul>        
             </div>
             <div class="feedback">
-                <form>
+                <div class="success">Thank you for the Feedback</div>
+                <form id="feedback-form" action="#">
                     <p><input type="text" id="name" placeholder="Full Name" required></p>
                     <p><input type="text" id="company" placeholder="College/Company"></p> 
                     <p><input type="number" id="phone" placeholder="Phone"></p>
-                    <p><input type="email" id="emai" placeholder="Email" required></p>
+                    <p><input type="email" id="email" placeholder="Email" required></p>
                     <p class="full"><textarea id="feedback" rows="5" placeholder="Feedback" required></textarea></p>
                     <p class="full"><input type="submit" class="button" value="Submit"></p>
                 </form>        
             </div>
         </div>        
     </div>
+    <script src="https://www.gstatic.com/firebasejs/4.5.0/firebase.js"></script>
+    <script src="main.js"></script>
 </body>
 </html>
