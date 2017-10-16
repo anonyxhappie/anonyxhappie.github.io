@@ -3,7 +3,7 @@
 }
 
 body{
-    background-color: #92bde7;
+    background-color: rgba(2, 145, 216, 0.75);
     color: #485e74;
     line-height: 1.6;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -26,6 +26,12 @@ ul{
     text-align: center;
 }
 
+.event i img{
+    width: 50px;
+    height: 50px;   
+    margin-right: 5px;
+    margin-bottom: -12px;
+}
 .event span{
     color: #fff;
 }
@@ -39,12 +45,27 @@ ul{
 }
 
 .speaker-info{
-    background-color: #c9e6ff;
+    background-color: #039be5;
+    color: #fff;
 }
 
 .speaker-info h3, .speaker-info ul{
     text-align: center;
     margin: 0 0 1rem o;
+}
+
+.speaker-info h3{
+    color: #fff;
+}
+
+.speaker-info h3 span{
+    color: #485e74;
+}
+
+.speaker-info h3 i img{
+    width: 40px;
+    height: 40px;
+    margin-bottom: -10px;
 }
 
 .feedback{
@@ -70,20 +91,20 @@ ul{
 .feedback form input, .feedback form textarea{
     width: 100%;
     padding: 1em;
-    border: 1px solid #c9e6ff;
+    border: 1px solid #92bde7;
 }
 
 .feedback form .button{
-    background: #c9e6ff;
+    background: #ffc107;
     border: 0;
     cursor: pointer;
     text-transform: uppercase;
+    color: #fff;
 }
 
 .feedback form .button:hover, .feedback form .button:focus{
-    background: #92bde7;
-    color: #fff;
-    transition: background-color,color 1s ease-out;
+    background: #039be5; /*#059b2d - success, #e61604 - error*/
+    transition: background-color 1s ease-out;
 } 
 
 /* Large Screens */
