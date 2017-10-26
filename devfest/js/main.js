@@ -30,14 +30,15 @@ function submitFeedback(event){
 }
 
 function saveData(name, company, phone, email, feedback){
-    var newFeedback = feedbackRef.push();
-    newFeedback.set({
+    var newFeedback = {
         name: name,
         company: company,
         phone: phone,
         email: email,
         feedback: feedback
-    });
+    };
+    
+    feedbackRef.push().set(newFeedback);
 }
 
 function getValue(id){
