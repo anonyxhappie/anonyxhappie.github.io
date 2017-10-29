@@ -41,6 +41,22 @@ body{
     padding: 1em;
 }
 
+#signin {
+    border: 0;
+    float: right;
+    color: #fff;
+    background: #ffc107;
+    transition: background-color 1s ease-out;
+}
+
+#signin:hover, #signin:focus {
+    cursor: pointer;
+    background: #039be5;
+    transition: background-color 1s ease-out;
+}
+
+
+
 /* Large Screens */
 @media(min-width:700px){
 
@@ -51,3 +67,4 @@ body{
     }
 
 }
+

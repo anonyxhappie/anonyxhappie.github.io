@@ -5,13 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>DevFest17 Feedback</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css" />
+    
 </head>
 
 <body>
     <div class="container">
-        <h1 class="event"><i><img src="images/google-logo.png" alt="google-logo"></i><span>Dev<i>F</i>est </span> Feedback</h1>
-        <div id="feedback" class="wrapper"></div>        
+        <h1 class="event"><i><img src="images/google-logo.png" alt="google-logo" class="animated slideInRight"></i><span>Dev<i>F</i>est </span> Feedback</h1>
+        <div id="login" class="wrapper">
+            <span><strong>Login to get Feedback</strong></span>
+            <button id="signin" onclick="authCheck()" class="animated tada">Sign In</button>                
+        </div>
+        <div id="feedback" class="wrapper animated rotateInUpRight">
+        </div>        
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/4.5.0/firebase.js"></script>

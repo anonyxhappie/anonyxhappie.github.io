@@ -110,6 +110,7 @@ ul{
     cursor: pointer;
     text-transform: uppercase;
     color: #fff;
+    transition: background-color 1s ease-out;
 }
 
 .feedback form .button:hover, .feedback form .button:focus{
