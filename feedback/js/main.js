@@ -12,15 +12,19 @@ firebase.initializeApp(config);
 
 var dataRef = firebase.database().ref('feedback');
 
-dataRef.on('value', function(data){
-    data.forEach(function(element) {
-        var newF = element.val();
-        createFeedbackElement(newF.name, newF.feedback);    
+    dataRef.on('child_added', function(snapshot){
+        var newF = snapshot.val();
+        createFeedbackElement(newF.name, newF.feedback);
     });
-    if(data.numChildren() != document.getElementById('feedback').childElementCount){
-        location.reload();
-    }
-});
+// dataRef.on('value', function(data){
+//     data.forEach(function(element) {
+//         var newF = element.val();
+//         createFeedbackElement(newF.name, newF.feedback);    
+//     });
+//     if(data.numChildren() != document.getElementById('feedback').childElementCount){
+//         location.reload();
+//     }
+// });
 
 function createFeedbackElement(name, feedback){        
     var nameH3 = document.createElement('h3');
