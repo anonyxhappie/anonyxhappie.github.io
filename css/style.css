@@ -3,6 +3,10 @@ body{
     text-align: center;
 }
 
+a{
+  text-decoration: none;
+}
+
 .fullscreen-bg {
     position: fixed;
     top: 0;
@@ -27,6 +31,7 @@ body{
 
   .title{
     font-size: 520%; 
+    color: #fff;
     line-height: .1;
     letter-spacing: 1.2;
     text-shadow: 5px 3px #000;
