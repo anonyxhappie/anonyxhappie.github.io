@@ -3,7 +3,7 @@ body{
     text-align: center;
 }
 
-a{
+a, a:link, a:visited{
   text-decoration: none!important;
 }
 
