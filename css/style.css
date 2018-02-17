@@ -82,7 +82,7 @@ body{
   }
   
 
-  @media (max-width: 50px) {
+  @media (max-width: 770px) {
     .fullscreen-bg {
       background: url('raw/bg.jpg') center center / cover no-repeat;
     }
