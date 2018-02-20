@@ -1,13 +1,6 @@
-var config = {
-    apiKey: "AIzaSyB7OBVdghZHJ0-VKlC9wq1EWAFxute-IGM",
-    authDomain: "time-tracking-b4b81.firebaseapp.com",
-    databaseURL: "https://time-tracking-b4b81.firebaseio.com",
-    projectId: "time-tracking-b4b81",
-    storageBucket: "time-tracking-b4b81.appspot.com",
-    messagingSenderId: "251184367762"
-  };
-firebase.initializeApp(config);
-var feedbackRef = firebase.database().ref('feedback');      
+// Encrypt this Code otherwise anyone can change your Database Schema and so more...
+eval(function(p,a,c,k,e,d){e=function(c){return c.toString(36)};if(!''.replace(/^/,String)){while(c--){d[c.toString(a)]=k[c]||c.toString(a)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('6 5={c:"d-e-b",a:"0-1-2.8.3",9:"7://0-1-2.f.3",p:"0-1-2",m:"0-1-2.l.3",k:"h"};4.i(5);6 j=4.n().g(\'o\');',26,26,'time|tracking|b4b81|com|firebase|config|var|https|firebaseapp|databaseURL|authDomain|IGM|apiKey|AIzaSyB7OBVdghZHJ0|VKlC9wq1EWAFxute|firebaseio|ref|251184367762|initializeApp|feedbackRef|messagingSenderId|appspot|storageBucket|database|feedback|projectId'.split('|'),0,{}))
+     
 
 document.getElementById('feedback-form').addEventListener('submit', submitFeedback);
 
