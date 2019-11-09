@@ -10,17 +10,17 @@ declare var particlesJS: any;
 export class HomeComponent implements OnInit {
 
   theme = 'light';
+  magicWord = 'akshay';
+
   constructor() { }
 
   ngOnInit() {
-    /* particlesJS.load(@dom-id, @path-json, @callback (optional)); */
-    // particlesJS.load('particles-js', 'assets/particles.json', function() {
-    //   console.log('callback - particles.js config loaded');
-    // });
-    particlesJS.load('particles-js', 'assets/particles.json', () => {
-      // console.log('callback - particles.js config loaded');
-      console.log('');
-    });
+    this.setTheme();
+    this.trackMagicWord();
+    particlesJS.load('particles-js', 'assets/particles.json', () => {});
+  }
+
+  setTheme() {
     const d = new Date();
     if (d.getMinutes() % 2 === 0) {
       this.theme = 'dark';
@@ -29,4 +29,24 @@ export class HomeComponent implements OnInit {
     }
   }
 
+  trackMagicWord() {
+    let word = '';
+    document.addEventListener('keydown', (e) => {
+      // console.log(e, e.key);
+      word += e.key;
+      if (e.key === ' ' || e.key === 'Enter' || e.key === 'Backspace') {
+        word = '';
+      }
+      if (word === this.magicWord) {
+        if (this.theme === 'light') {
+          this.theme = 'dark';
+        } else {
+          this.theme = 'light';
+        }
+        word = '';
+      }
+      // console.log(word);
+    }, true);
+
+  }
 }
