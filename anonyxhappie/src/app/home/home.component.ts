@@ -10,23 +10,31 @@ declare var particlesJS: any;
 export class HomeComponent implements OnInit {
 
   theme = 'light';
+  jsonPath = 'assets/particles-light.json';
   magicWord = 'akshay';
 
-  constructor() { }
-
-  ngOnInit() {
+  constructor() {
     this.setTheme();
     this.trackMagicWord();
-    particlesJS.load('particles-js', 'assets/particles.json', () => {});
+  }
+
+  ngOnInit() {
+    // this.setThemeTo('light');
   }
 
   setTheme() {
     const d = new Date();
     if (d.getMinutes() % 2 === 0) {
-      this.theme = 'dark';
+      this.setThemeTo('dark');
     } else {
-      this.theme = 'light';
+      this.setThemeTo('light');
     }
+  }
+
+  setThemeTo(theme) {
+    this.theme = theme;
+    this.jsonPath = 'assets/particles-' + theme + '.json';
+    particlesJS.load('particles-js', this.jsonPath, () => {});
   }
 
   trackMagicWord() {
@@ -37,11 +45,11 @@ export class HomeComponent implements OnInit {
       if (e.key === ' ' || e.key === 'Enter' || e.key === 'Backspace') {
         word = '';
       }
-      if (word === this.magicWord) {
+      if (word.toLowerCase() === this.magicWord) {
         if (this.theme === 'light') {
-          this.theme = 'dark';
+          this.setThemeTo('dark');
         } else {
-          this.theme = 'light';
+          this.setThemeTo('light');
         }
         word = '';
       }

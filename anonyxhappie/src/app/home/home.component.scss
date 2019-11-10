@@ -1,7 +1,15 @@
-@import url('https://fonts.googleapis.com/css?family=McLaren&display=swap');
+// @import url('https://fonts.googleapis.com/css?family=McLaren&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Black+Ops+One|Liu+Jian+Mao+Cao|Yeon+Sung|ZCOOL+KuaiLe|ZCOOL+XiaoWei&display=swap');
+// font-family: 'Liu Jian Mao Cao', cursive;
+// font-family: 'Black Ops One', cursive;
+// font-family: 'Yeon Sung', cursive;
+// font-family: 'ZCOOL KuaiLe', cursive;
+// font-family: 'ZCOOL XiaoWei', serif;
 
-$color2: cornflowerblue;
 $color1: #fff;
+$color2: darken(#888fff, 10%);
+$fontStyle: 'ZCOOL KuaiLe', cursive;
+// $color2: cornflowerblue;
 
 @keyframes cursoranimate {
   0%{
@@ -34,7 +42,7 @@ $color1: #fff;
 }
 
 .home-container {
-  font-family: 'McLaren', cursive;
+  font-family: $fontStyle;
   margin: 0;
   display: flex;
   width: 100%;
@@ -46,7 +54,7 @@ $color1: #fff;
 
   .content {
     // background-color: cornflowerblue;
-    min-width: 300px;
+    min-width: 320px;
     width: 30%;
     height: 200px;
     display: flex;
@@ -54,7 +62,8 @@ $color1: #fff;
     align-items: center;
     justify-content: space-between;
     padding: 2rem 0;
-    // z-index: 1;
+    box-shadow: -1px 2px 36px 21px rgba(0,0,0,0.33);
+    z-index: 5;
 
     .text-header {
       text-align: center;
@@ -62,13 +71,20 @@ $color1: #fff;
       h1 {
         font-size: 2.5rem;
         line-height: 2rem;
+        position: relative;
+        z-index: 3;
+        font-family: 'ZCOOL XiaoWei', serif;
       }
-      p {}
+      p {
+        position: relative;
+        z-index: 3;
+      }
     }
     .icons {
+      margin-bottom: 1rem;
       a {
         position: relative;
-        z-index: 2;
+        z-index: 4;
         text-decoration: none;
         margin: 1rem;
         transition: color ease 1s;
@@ -86,6 +102,8 @@ $color1: #fff;
       .mat-icon {
         width: 2rem;
         height: 2rem;
+        // position: relative;
+        // z-index: 2;
       }
     }
   }
