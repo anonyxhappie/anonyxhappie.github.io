@@ -90,20 +90,29 @@
       };
 
       const CONFIG = {
+        // base grid resolution (will be scaled up on high-dpi / large screens)
+        BASE_GRID_X: 36,
+        BASE_GRID_Y: 54,
         GRID_X: 36,
         GRID_Y: 54,
-        iterations: 25,
-        paperStiffness: 1.0,
-        compressionStiff: 0.05,
-        bendStiffness: 0.96,
-        damping: 0.85,
-        gravity: 0.015,
-        wind: prefersReducedMotion ? 0.0 : 0.012,
-        dragForce: 0.35,
+        // more solver iterations for softer cloth stability
+        iterations: 36,
+        // lower stretch stiffness for cloth-like behavior
+        paperStiffness: 0.55,
+        // cloth resists compression differently
+        compressionStiff: 0.02,
+        // lower bend stiffness so folds form more naturally
+        bendStiffness: 0.35,
+        // slightly less damping so cloth has a softer motion
+        damping: 0.92,
+        // gravity a bit higher to accentuate drape
+        gravity: 0.02,
+        wind: prefersReducedMotion ? 0.0 : 0.014,
+        dragForce: 0.38,
         dragRadius: 240,
-        homePull: 0.08,
-        shadingIntensity: 0.45,
-        shadowAlpha: 0.15
+        homePull: 0.045,
+        shadingIntensity: 0.5,
+        shadowAlpha: 0.12
       };
 
       const state = {
@@ -137,6 +146,11 @@
         canvas.style.height = state.h + "px";
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
+        // adaptive mesh scaling: increase mesh density on high-DPR or large screens
+        const meshScale = (dpr >= 2 || Math.max(state.w, state.h) > 1400) ? 2 : 1;
+        CONFIG.GRID_X = Math.max(12, Math.floor(CONFIG.BASE_GRID_X * meshScale));
+        CONFIG.GRID_Y = Math.max(12, Math.floor(CONFIG.BASE_GRID_Y * meshScale));
+
         state.sheetW = Math.min(state.w * 0.85, 780);
         state.sheetH = Math.min(state.h * 0.88, 1100);
         rebuildMesh();
@@ -155,7 +169,8 @@
             const v = y / CONFIG.GRID_Y;
             const px = left + u * state.sheetW;
             const py = top + v * state.sheetH;
-            state.points.push({ x: px, y: py, px, py, homeX: px, homeY: py, u, v });
+            // add curvature accumulator for wrinkle detection
+            state.points.push({ x: px, y: py, px, py, homeX: px, homeY: py, u, v, curv: 0 });
           }
         }
 
@@ -175,93 +190,96 @@
       }
 
       function renderContentTexture() {
-        const cw = Math.floor(state.sheetW), ch = Math.floor(state.sheetH);
+        // sheet size in logical pixels
+        const sheetW = Math.floor(state.sheetW), sheetH = Math.floor(state.sheetH);
+        // upsample content on high-DPR displays to reduce visible triangle faceting
+        const contentScale = (dpr >= 2) ? 2 : 1;
+        const cw = sheetW * contentScale, ch = sheetH * contentScale;
         state.contentCanvas.width = cw; state.contentCanvas.height = ch;
         const g = state.contentCtx;
+        // scale drawing so we can use logical sizes (sheetW/sheetH) below
+        g.setTransform(contentScale, 0, 0, contentScale, 0, 0);
 
         // ensure backCanvas matches content size
         state.backCanvas.width = cw; state.backCanvas.height = ch;
         const b = state.backCtx;
 
-        // Paper background with subtle texture
+        // Paper background with subtle texture (drawn in logical pixels)
         g.fillStyle = "#f5f0e6";
-        g.fillRect(0, 0, cw, ch);
+        g.fillRect(0, 0, sheetW, sheetH);
         for (let i = 0; i < 6000; i++) {
           g.fillStyle = "rgba(40,30,20," + (Math.random() * 0.05).toFixed(3) + ")";
-          g.fillRect(Math.random() * cw, Math.random() * ch, 1, 1);
+          g.fillRect(Math.random() * sheetW, Math.random() * sheetH, 1, 1);
         }
 
-        const pad = Math.floor(cw * 0.07);
+        const pad = Math.floor(sheetW * 0.07);
         let y = pad + 20;
 
         // Masthead (Newspaper Title)
         g.textAlign = "center";
         g.fillStyle = "#1a1a1a";
-        g.font = "900 " + Math.floor(cw * 0.08) + "px 'Playfair Display', serif";
-        g.fillText(CONTENT.headerName, cw / 2, y);
-        y += Math.floor(cw * 0.05);
+        g.font = "900 " + Math.floor(sheetW * 0.08) + "px 'Playfair Display', serif";
+        g.fillText(CONTENT.headerName, sheetW / 2, y);
+        y += Math.floor(sheetW * 0.05);
 
         // Thin horizontal rule
         g.strokeStyle = "#1a1a1a";
         g.lineWidth = 1.5;
-        g.beginPath(); g.moveTo(pad, y); g.lineTo(cw - pad, y); g.stroke();
+        g.beginPath(); g.moveTo(pad, y); g.lineTo(sheetW - pad, y); g.stroke();
         y += 22;
 
         // Dateline
-        g.font = "700 " + Math.floor(cw * 0.02) + "px 'Source Serif 4', serif";
-        g.fillText(CONTENT.dateline, cw / 2, y);
+        g.font = "700 " + Math.floor(sheetW * 0.02) + "px 'Source Serif 4', serif";
+        g.fillText(CONTENT.dateline, sheetW / 2, y);
         y += 18;
 
         // Double horizontal rule
         g.lineWidth = 3;
-        g.beginPath(); g.moveTo(pad, y); g.lineTo(cw - pad, y); g.stroke();
+        g.beginPath(); g.moveTo(pad, y); g.lineTo(sheetW - pad, y); g.stroke();
         g.lineWidth = 1;
-        g.beginPath(); g.moveTo(pad, y + 6); g.lineTo(cw - pad, y + 6); g.stroke();
+        g.beginPath(); g.moveTo(pad, y + 6); g.lineTo(sheetW - pad, y + 6); g.stroke();
         y += 40;
 
         // Tagline
-        g.font = "italic 700 " + Math.floor(cw * 0.035) + "px 'Playfair Display', serif";
-        g.fillText(CONTENT.tagline, cw / 2, y);
+        g.font = "italic 700 " + Math.floor(sheetW * 0.035) + "px 'Playfair Display', serif";
+        g.fillText(CONTENT.tagline, sheetW / 2, y);
         y += 50;
 
         // Summary (Lead Paragraph)
         g.textAlign = "left";
         g.fillStyle = "#262626";
-        g.font = "500 " + Math.floor(cw * 0.028) + "px 'Source Serif 4', serif";
-        y = wrapText(g, CONTENT.summary, pad, y, cw - pad * 2, Math.floor(cw * 0.042));
+        g.font = "500 " + Math.floor(sheetW * 0.028) + "px 'Source Serif 4', serif";
+        y = wrapText(g, CONTENT.summary, pad, y, sheetW - pad * 2, Math.floor(sheetW * 0.042));
         y += 40;
 
         // Section: EXPERIENCE
-        // drawSectionHeader(g, "EXPERIENCE", pad, y, cw);
         y += 45;
         for (const exp of CONTENT.experiences) {
           g.fillStyle = "#1a1a1a";
-          g.font = "900 " + Math.floor(cw * 0.026) + "px 'Playfair Display', serif";
+          g.font = "900 " + Math.floor(sheetW * 0.026) + "px 'Playfair Display', serif";
           g.fillText(exp.company, pad, y);
-          y += Math.floor(cw * 0.032);
+          y += Math.floor(sheetW * 0.032);
           g.fillStyle = "#333";
-          g.font = "italic 600 " + Math.floor(cw * 0.022) + "px 'Source Serif 4', serif";
+          g.font = "italic 600 " + Math.floor(sheetW * 0.022) + "px 'Source Serif 4', serif";
           g.fillText(exp.role, pad, y);
-          y += Math.floor(cw * 0.032);
+          y += Math.floor(sheetW * 0.032);
           g.fillStyle = "#262626";
-          g.font = "400 " + Math.floor(cw * 0.022) + "px 'Source Serif 4', serif";
-          y = wrapText(g, exp.desc, pad, y, cw - pad * 2, Math.floor(cw * 0.032));
+          g.font = "400 " + Math.floor(sheetW * 0.022) + "px 'Source Serif 4', serif";
+          y = wrapText(g, exp.desc, pad, y, sheetW - pad * 2, Math.floor(sheetW * 0.032));
           y += 25;
         }
 
         // Section: SKILLS
-        // drawSectionHeader(g, "SKILLS & EXPERTISE", pad, y, cw);
         y += 45;
         g.fillStyle = "#262626";
-        g.font = "600 " + Math.floor(cw * 0.02) + "px 'Source Serif 4', serif";
+        g.font = "600 " + Math.floor(sheetW * 0.02) + "px 'Source Serif 4', serif";
         const skillsText = CONTENT.skills.join("  |  ");
-        y = wrapText(g, skillsText, pad, y, cw - pad * 2, Math.floor(cw * 0.035));
+        y = wrapText(g, skillsText, pad, y, sheetW - pad * 2, Math.floor(sheetW * 0.035));
         y += 35;
 
         // Section: CONTACT
-        // drawSectionHeader(g, "CORRESPONDENCE", pad, y, cw);
         y += 45;
-        g.font = "600 " + Math.floor(cw * 0.022) + "px 'Source Serif 4', serif";
+        g.font = "600 " + Math.floor(sheetW * 0.022) + "px 'Source Serif 4', serif";
         g.fillText("Email: " + CONTENT.contact.email, pad, y); y += 28;
         g.fillText("GitHub: " + CONTENT.contact.github, pad, y); y += 28;
         g.fillText("LinkedIn: " + CONTENT.contact.linkedin, pad, y);
@@ -269,31 +287,45 @@
         // Instruction
         g.textAlign = "center";
         g.fillStyle = "#666";
-        g.font = "italic 500 " + Math.floor(cw * 0.018) + "px 'Source Serif 4', serif";
-        g.fillText(CONTENT.instruction, cw * 0.5, ch - 40);
+        g.font = "italic 500 " + Math.floor(sheetW * 0.018) + "px 'Source Serif 4', serif";
+        g.fillText(CONTENT.instruction, sheetH * 0.5, sheetH - 40);
 
-        // Build a desaturated + blurred backface texture from the content canvas
+        // Build a woven/cloth backface texture from the content canvas to read like fabric
         try {
           b.clearRect(0, 0, cw, ch);
-          // copy content and blur to wash out text
-          b.filter = 'blur(2px)';
+          // Copy the content but heavily blur/soften to remove legible text
+          b.filter = 'blur(' + (2 * contentScale) + 'px)';
           b.drawImage(state.contentCanvas, 0, 0);
           b.filter = 'none';
-          // warm/mute the backface color slightly so it reads like paper underside
+          // apply a subtle desaturate/warm tint
           b.globalCompositeOperation = 'multiply';
-          b.fillStyle = 'rgba(235,225,205,0.45)';
+          b.fillStyle = 'rgba(230,220,200,0.55)';
           b.fillRect(0, 0, cw, ch);
           b.globalCompositeOperation = 'source-over';
-          // subtle noise on the backface for fiber-like look
+
+          // draw a small woven pattern to suggest cloth fibers (pattern scales with DPI)
+          const patternSize = Math.max(2, Math.floor(Math.min(cw, ch) / (120 / contentScale)));
+          b.fillStyle = 'rgba(0,0,0,0.03)';
+          for (let y2 = 0; y2 < ch; y2 += patternSize * 2) {
+            for (let x2 = 0; x2 < cw; x2 += patternSize * 2) {
+              b.fillRect(x2, y2, patternSize, patternSize);
+              b.fillRect(x2 + patternSize, y2 + patternSize, patternSize, patternSize);
+            }
+          }
+
+          // subtle noise overlay
           b.globalAlpha = 0.06;
           b.fillStyle = '#000';
-          for (let i = 0; i < Math.floor(cw * ch * 0.00002); i++) {
+          for (let i = 0; i < Math.floor(cw * ch * 0.000018); i++) {
             b.fillRect(Math.random() * cw, Math.random() * ch, 1, 1);
           }
           b.globalAlpha = 1;
         } catch (e) {
-          // some older browsers may not support ctx.filter; silently ignore
+          // ignore if ctx.filter not supported
         }
+
+        // reset transform on content context so future draws are not scaled
+        g.setTransform(1, 0, 0, 1, 0, 0);
       }
 
       function drawSectionHeader(g, label, pad, y, cw) {
@@ -357,6 +389,22 @@
           }
           if (state.pointer.down && state.pinnedPoint) {
             state.pinnedPoint.x = state.pointer.x; state.pinnedPoint.y = state.pointer.y;
+          }
+        }
+        // compute a simple curvature per-vertex (Laplacian) used for wrinkle shading
+        for (let y = 1; y < CONFIG.GRID_Y; y++) {
+          for (let x = 1; x < CONFIG.GRID_X; x++) {
+            const i = idx(x, y);
+            const p = state.points[i];
+            const left = state.points[idx(x - 1, y)];
+            const right = state.points[idx(x + 1, y)];
+            const up = state.points[idx(x, y - 1)];
+            const down = state.points[idx(x, y + 1)];
+            // curvature as distance from average neighbors
+            const avgX = (left.x + right.x + up.x + down.x) * 0.25;
+            const avgY = (left.y + right.y + up.y + down.y) * 0.25;
+            const cx = p.x - avgX, cy = p.y - avgY;
+            p.curv = Math.hypot(cx, cy);
           }
         }
       }
@@ -462,7 +510,7 @@
         }
       }
 
-      function tick() { state.frame++; integrate(); applyPointerForce(); satisfyConstraints(); drawPaper(); requestAnimationFrame(tick); }
+  function tick() { state.frame++; integrate(); applyPointerForce(); satisfyConstraints(); drawPaper(); requestAnimationFrame(tick); }
       function onPointer(e) { state.pointer.x = e.clientX; state.pointer.y = e.clientY; }
       canvas.addEventListener("pointerdown", e => {
         state.pointer.down = true; onPointer(e); canvas.classList.add("dragging");
