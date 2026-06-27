@@ -21,17 +21,18 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
+      position: fixed;
       background: radial-gradient(circle at 20% 14%, #f7f2e7 0, #ebe4d8 42%, #e5dfd3 100%);
       font-family: 'Source Serif 4', serif;
     }
 
-    #stage {
-      position: fixed;
-      inset: 0;
-      width: 100%;
-      height: 100%;
+    canvas#stage {
+      max-width: 100%;
+      height: auto;
       touch-action: none;
       cursor: grab;
+      display: block;
+      margin: 0 auto;
     }
 
     #stage.dragging {
@@ -47,13 +48,15 @@
     (function () {
       const canvas = document.getElementById("stage");
       const ctx = canvas.getContext("2d");
-      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      const dpr = window.devicePixelRatio || 1;
       const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
       function getDateline() {
         const d = new Date();
         const opts = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
         // e.g. "Friday, March 27, 2026" -> uppercase to match masthead style
+
+
         const formatted = d.toLocaleDateString('en-US', opts).toUpperCase();
         return `${formatted}`;
       }
@@ -80,7 +83,14 @@
             desc: "Scaled backend services for a 50M+ user social platform; improved throughput and resilience across distributed systems."
           }
         ],
-        skills: ["Python", "Java", "TypeScript", "JavaScript", "Microservices", "REST APIs", "Kubernetes", "Docker", "Linux", "AWS", "GCP", "Solidity", "Web3", "IOT", "AI", "LLM"],
+        skills: [
+          "Backend Development (Python, Java, TypeScript)",
+          "Distributed Architecture (Microservices, RESTful APIs)",
+          "Cloud Infrastructure (AWS, GCP)",
+          "Container Orchestration (Kubernetes, Docker)",
+          "System Administration (Linux, IoT)",
+          "Emerging Technologies (AI, LLMs, Web3, Solidity)"
+        ],
         contact: {
           email: "heyakshaysaini@gmail.com",
           github: "github.com/anonyxhappie",
@@ -147,27 +157,46 @@
       function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
       function idx(x, y) { return y * (CONFIG.GRID_X + 1) + x; }
 
+      // detect mobile (narrow viewport)
+      function isMobile() { return state.w < 600; }
+
+      // Keep track of width to avoid jumpy mobile resizing
+      let lastWidth = 0;
+
       function resize() {
+        if (isMobile() && window.innerWidth === lastWidth) return;
+        lastWidth = window.innerWidth;
+        
+        // Sync internal state to viewport directly
         state.w = window.innerWidth;
         state.h = window.innerHeight;
+        // Align internal buffer with physical device pixels
         canvas.width = Math.floor(state.w * dpr);
         canvas.height = Math.floor(state.h * dpr);
-        canvas.style.width = state.w + "px";
-        canvas.style.height = state.h + "px";
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-        // adaptive mesh scaling: increase mesh density on high-DPR or large screens
-        // allow override from DEBUG_SETTINGS.meshScale (1..3)
-        let meshScale = (dpr >= 2 || Math.max(state.w, state.h) > 1400) ? 2 : 1;
+        // On mobile, use visualViewport for actual visible area (excludes Safari address bar)
+        const visH = (isMobile() && window.visualViewport) ? window.visualViewport.height : state.h;
+
+        // adaptive mesh scaling: reduce on mobile for performance, increase on large/hi-dpi screens
+        let meshScale = isMobile() ? 1 : ((dpr >= 2 || Math.max(state.w, state.h) > 1400) ? 2 : 1);
         if (window.DEBUG_SETTINGS && Number.isFinite(window.DEBUG_SETTINGS.meshScale)) {
           meshScale = Math.max(1, Math.min(3, Math.floor(window.DEBUG_SETTINGS.meshScale)));
         }
         CONFIG.GRID_X = Math.max(12, Math.floor(CONFIG.BASE_GRID_X * meshScale));
         CONFIG.GRID_Y = Math.max(12, Math.floor(CONFIG.BASE_GRID_Y * meshScale));
 
-        const isMobile = state.w < 768;
-        state.sheetW = isMobile ? Math.min(state.w * 0.92, 780) : Math.min(state.w * 0.85, 780);
-        state.sheetH = isMobile ? Math.min(state.h * 0.92, 1100) : Math.min(state.h * 0.88, 1100);
+        // Enforce consistent aspect ratio for the sheet
+        state.sheetW = isMobile() ? (state.w * 0.92) : Math.min(state.w * 0.85, 780);
+        // Increase aspect ratio to 1.55 to fit content without clipping
+        state.sheetH = state.sheetW * 1.55;
+
+        // Adjust homePull to allow for corner dragging without physics collapse
+        CONFIG.homePull = isMobile() ? 0.4 : 0.2;
+        // Reduce gravity to prevent aggressive sagging/folding
+        CONFIG.gravity = isMobile() ? 0.1 : 0.5;
+        CONFIG.wind = prefersReducedMotion ? 0.0 : (isMobile() ? 0.0 : 0.014);
+
         rebuildMesh();
         renderContentTexture();
       }
@@ -207,8 +236,9 @@
       function renderContentTexture() {
         // sheet size in logical pixels
         const sheetW = Math.floor(state.sheetW), sheetH = Math.floor(state.sheetH);
-        // upsample content on high-DPR displays to reduce visible triangle faceting
-        let contentScale = (dpr >= 2) ? 2 : 1;
+        const mobile = isMobile();
+        // 1. Use full DPR for sharpness
+        let contentScale = dpr;
         if (window.DEBUG_SETTINGS && Number.isFinite(window.DEBUG_SETTINGS.contentScale)) {
           contentScale = Math.max(1, Math.min(3, Math.floor(window.DEBUG_SETTINGS.contentScale)));
         }
@@ -225,88 +255,103 @@
         // Paper (cloth) background with subtle texture (drawn in logical pixels)
         g.fillStyle = "#f5f0e6";
         g.fillRect(0, 0, sheetW, sheetH);
-        for (let i = 0; i < 6000; i++) {
+        const noiseCount = mobile ? 3000 : 6000;
+        for (let i = 0; i < noiseCount; i++) {
           g.fillStyle = "rgba(40,30,20," + (Math.random() * 0.05).toFixed(3) + ")";
           g.fillRect(Math.random() * sheetW, Math.random() * sheetH, 1, 1);
         }
 
-        const pad = Math.floor(sheetW * 0.07);
-        let y = pad + 20;
+        // Responsive sizing helpers — ensure minimum readable font sizes on mobile
+        const pad = Math.floor(mobile ? sheetW * 0.05 : sheetW * 0.07);
+        function fontSize(ratio, minPx) { return Math.max(minPx || 11, Math.floor(sheetW * ratio)) + "px"; }
+
+        // Add small space above headerName
+        let y = pad + (mobile ? 60 : 60);
 
         // Masthead (Newspaper Title)
         g.textAlign = "center";
         g.fillStyle = "#1a1a1a";
-        g.font = "900 " + Math.max(28, Math.floor(sheetW * 0.08)) + "px 'Playfair Display', serif";
+        // 2. Scale typography relative to the sheet width
+        const titleSize = Math.max(24, sheetW * 0.12);
+        g.font = `bold ${titleSize}px 'Playfair Display', serif`;
         g.fillText(CONTENT.headerName, sheetW / 2, y);
-        y += Math.max(20, Math.floor(sheetW * 0.05));
+        y += mobile ? 12 : 20;
 
         // Thin horizontal rule
         g.strokeStyle = "#1a1a1a";
         g.lineWidth = 1.5;
         g.beginPath(); g.moveTo(pad, y); g.lineTo(sheetW - pad, y); g.stroke();
-        y += 22;
+        y += mobile ? 12 : 18;
 
         // Dateline
-        g.font = "700 " + Math.max(10, Math.floor(sheetW * 0.02)) + "px 'Source Serif 4', serif";
+        g.font = "700 " + fontSize(0.025, 10) + " 'Source Serif 4', serif";
         g.fillText(CONTENT.dateline, sheetW / 2, y);
-        y += 18;
+        y += mobile ? 8 : 12;
 
         // Double horizontal rule
         g.lineWidth = 3;
         g.beginPath(); g.moveTo(pad, y); g.lineTo(sheetW - pad, y); g.stroke();
         g.lineWidth = 1;
         g.beginPath(); g.moveTo(pad, y + 6); g.lineTo(sheetW - pad, y + 6); g.stroke();
-        y += 40;
+        y += mobile ? 20 : 40;
 
         // Tagline
-        g.font = "italic 700 " + Math.max(14, Math.floor(sheetW * 0.035)) + "px 'Playfair Display', serif";
+        g.font = "italic 700 " + fontSize(0.035, 15) + " 'Playfair Display', serif";
         g.fillText(CONTENT.tagline, sheetW / 2, y);
-        y += Math.max(30, Math.floor(sheetW * 0.05));
+        y += mobile ? 16 : 30;
 
         // Summary (Lead Paragraph)
         g.textAlign = "left";
         g.fillStyle = "#262626";
-        g.font = "500 " + Math.max(12, Math.floor(sheetW * 0.028)) + "px 'Source Serif 4', serif";
-        y = wrapText(g, CONTENT.summary, pad, y, sheetW - pad * 2, Math.max(16, Math.floor(sheetW * 0.042)));
-        y += Math.max(20, Math.floor(sheetW * 0.04));
+        const summarySize = Math.max(12, Math.floor(sheetW * 0.028));
+        g.font = "500 " + summarySize + "px 'Source Serif 4', serif";
+        const summaryLineH = mobile ? Math.max(18, Math.floor(sheetW * 0.038)) : Math.floor(sheetW * 0.042);
+        y = wrapText(g, CONTENT.summary, pad, y, sheetW - pad * 2, summaryLineH);
+        y += mobile ? 6 : 25;
 
         // Section: EXPERIENCE
-        y += 45;
+        y += mobile ? 4 : 20;
         for (const exp of CONTENT.experiences) {
           g.fillStyle = "#1a1a1a";
-          g.font = "900 " + Math.max(11, Math.floor(sheetW * 0.026)) + "px 'Playfair Display', serif";
+          g.font = "900 " + fontSize(0.03, 13) + " 'Playfair Display', serif";
           g.fillText(exp.company, pad, y);
-          y += Math.max(14, Math.floor(sheetW * 0.032));
+          y += mobile ? Math.max(16, Math.floor(sheetW * 0.03)) : Math.floor(sheetW * 0.032);
           g.fillStyle = "#333";
-          g.font = "italic 600 " + Math.max(10, Math.floor(sheetW * 0.022)) + "px 'Source Serif 4', serif";
+          g.font = "italic 600 " + fontSize(0.025, 11) + " 'Source Serif 4', serif";
           g.fillText(exp.role, pad, y);
-          y += Math.max(14, Math.floor(sheetW * 0.032));
+          y += mobile ? Math.max(14, Math.floor(sheetW * 0.028)) : Math.floor(sheetW * 0.032);
           g.fillStyle = "#262626";
-          g.font = "400 " + Math.max(10, Math.floor(sheetW * 0.022)) + "px 'Source Serif 4', serif";
-          y = wrapText(g, exp.desc, pad, y, sheetW - pad * 2, Math.max(14, Math.floor(sheetW * 0.032)));
-          y += 18;
+          const descSize = Math.max(11, Math.floor(sheetW * 0.022));
+          g.font = "400 " + descSize + "px 'Source Serif 4', serif";
+          const descLineH = mobile ? Math.max(15, Math.floor(sheetW * 0.028)) : Math.floor(sheetW * 0.032);
+          y = wrapText(g, exp.desc, pad, y, sheetW - pad * 2, descLineH);
+          y += mobile ? 12 : 30;
         }
 
         // Section: SKILLS
-        y += 45;
+        y += mobile ? 6 : 30;
         g.fillStyle = "#262626";
-        g.font = "600 " + Math.max(9, Math.floor(sheetW * 0.02)) + "px 'Source Serif 4', serif";
-        const skillsText = CONTENT.skills.join("  |  ");
-        y = wrapText(g, skillsText, pad, y, sheetW - pad * 2, Math.max(12, Math.floor(sheetW * 0.035)));
-        y += 25;
+        const skillSize = Math.max(10, Math.floor(sheetW * 0.02));
+        g.font = "600 " + skillSize + "px 'Source Serif 4', serif";
+        const skillsText = CONTENT.skills.join(mobile ? " | " : "  |  ");
+        const skillLineH = mobile ? Math.max(16, Math.floor(sheetW * 0.03)) : Math.floor(sheetW * 0.035);
+        y = wrapText(g, skillsText, pad, y, sheetW - pad * 2, skillLineH);
+        y += mobile ? 6 : 30;
 
         // Section: CONTACT
-        y += 45;
-        g.font = "600 " + Math.max(10, Math.floor(sheetW * 0.022)) + "px 'Source Serif 4', serif";
-        g.fillText("Email: " + CONTENT.contact.email, pad, y); y += Math.max(14, Math.floor(sheetW * 0.028));
-        g.fillText("GitHub: " + CONTENT.contact.github, pad, y); y += Math.max(14, Math.floor(sheetW * 0.028));
+        y += mobile ? 6 : 30;
+        const contactSize = Math.max(11, Math.floor(sheetW * 0.022));
+        g.font = "600 " + contactSize + "px 'Source Serif 4', serif";
+        const contactLineH = mobile ? 20 : 28;
+        g.fillText("Email: " + CONTENT.contact.email, pad, y); y += contactLineH;
+        g.fillText("GitHub: " + CONTENT.contact.github, pad, y); y += contactLineH;
         g.fillText("LinkedIn: " + CONTENT.contact.linkedin, pad, y);
 
         // Instruction
         g.textAlign = "center";
         g.fillStyle = "#666";
-        g.font = "italic 500 " + Math.floor(sheetW * 0.018) + "px 'Source Serif 4', serif";
-        g.fillText(CONTENT.instruction, sheetH * 0.5, sheetH - 40);
+        g.font = "italic 500 " + fontSize(0.018, 9) + " 'Source Serif 4', serif";
+        g.fillText(CONTENT.instruction, sheetW * 0.5, sheetH - (mobile ? 20 : 40));
 
         // Build a woven/cloth backface texture from the content canvas to read like fabric
         try {
@@ -468,11 +513,13 @@
             const dy = (p0.y * (sx1 * sy2 - sx2 * sy1) + p1.y * (sx2 * sy0 - sx0 * sy2) + p2.y * (sx0 * sy1 - sx1 * sy0)) / denom;
             ctx.imageSmoothingEnabled = true;
             try { ctx.imageSmoothingQuality = 'high'; } catch (e) { /* ignore */ }
-            ctx.setTransform(m11, m12, m21, m22, dx, dy);
+            const dpr = window.devicePixelRatio || 1;
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            ctx.transform(m11, m12, m21, m22, dx, dy);
             // draw the backface texture (desaturated + blurred). Oversize slightly to hide seams.
             ctx.drawImage(state.backCanvas, -2, -2, sw + 4, sh + 4);
             // apply a slight warmening for creased/back areas by painting a translucent tint
-            ctx.setTransform(1, 0, 0, 1, 0, 0);
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
             // compute brightness offset from lighting
             const lite = clamp(0.45 + lightDot * 0.45, 0.1, 1.0);
             ctx.globalCompositeOperation = 'multiply';
@@ -493,7 +540,9 @@
             const dy = (p0.y * (sx1 * sy2 - sx2 * sy1) + p1.y * (sx2 * sy0 - sx0 * sy2) + p2.y * (sx0 * sy1 - sx1 * sy0)) / denom;
             ctx.imageSmoothingEnabled = true;
             try { ctx.imageSmoothingQuality = 'high'; } catch (e) { /* ignore */ }
-            ctx.setTransform(m11, m12, m21, m22, dx, dy);
+            const dpr = window.devicePixelRatio || 1;
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            ctx.transform(m11, m12, m21, m22, dx, dy);
             ctx.drawImage(img, -1, -1, sw + 2, sh + 2);
           }
         }
@@ -515,13 +564,20 @@
       }
 
       function drawPaper() {
+        const dpr = window.devicePixelRatio || 1;
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
         ctx.clearRect(0, 0, state.w, state.h);
         const center = state.points[idx(Math.floor(CONFIG.GRID_X / 2), Math.floor(CONFIG.GRID_Y / 2))];
         ctx.fillStyle = "rgba(0,0,0," + CONFIG.shadowAlpha + ")";
-        ctx.filter = "blur(45px)";
-        ctx.beginPath(); ctx.ellipse(center.x, center.y + 120, state.sheetW * 0.45, state.sheetH * 0.15, 0, 0, Math.PI * 2); ctx.fill();
+        const shadowBlur = isMobile() ? 20 : 45;
+        const shadowOffY = isMobile() ? 40 : 120;
+        ctx.filter = "blur(" + shadowBlur + "px)";
+        ctx.beginPath(); ctx.ellipse(center.x, center.y + shadowOffY, state.sheetW * 0.45, state.sheetH * 0.15, 0, 0, Math.PI * 2); ctx.fill();
         ctx.filter = "none";
-        const img = state.contentCanvas, sw = img.width, sh = img.height;
+        const img = state.contentCanvas;
+        const contentScale = window.devicePixelRatio || 1;
+        const sw = state.sheetW * contentScale;
+        const sh = state.sheetH * contentScale;
         // subdivision for smoothing: break each quad into smaller quads for rendering only
         const subdiv = (window.DEBUG_SETTINGS && window.DEBUG_SETTINGS.subdivision) ? Math.max(1, Math.min(4, Math.floor(window.DEBUG_SETTINGS.subdivision))) : 1;
         for (let y = 0; y < CONFIG.GRID_Y; y++) {
@@ -564,8 +620,18 @@
       window.addEventListener("pointermove", onPointer);
       window.addEventListener("pointerup", () => { state.pointer.down = false; state.pinnedPoint = null; canvas.classList.remove("dragging"); });
       window.addEventListener("resize", resize);
+      // On mobile Safari, visualViewport resizes when address bar shows/hides
+      if (window.visualViewport) window.visualViewport.addEventListener("resize", resize);
       // create debug UI (live tweak controls)
+      let debugWrap = null;
       function createDebugUI() {
+        return; // Hide debug tool as requested
+        
+        // Remove existing if present
+        if (debugWrap) { debugWrap.remove(); debugWrap = null; }
+        // Hide debug UI on mobile — it covers the entire sheet
+        if (window.innerWidth < 600) return;
+
         const wrap = document.createElement('div');
         wrap.style.position = 'fixed';
         wrap.style.left = '10px';
@@ -639,13 +705,11 @@
         resetBtn.onclick = () => { window.DEBUG_SETTINGS = { meshScale: null, contentScale: null, subdivision: 1, weaveDensity: 1.0, backTintAlpha: 0.55, backBlur: 3 }; meshScaleInput.value = (dpr >= 2 ? 2 : 1); contentScaleInput.value = (dpr >= 2 ? 2 : 1); subdivInput.value = 1; weaveInput.value = 1; blurInput.value = 3; tintInput.value = 0.55; shadeInput.value = CONFIG.shadingIntensity; resize(); renderContentTexture(); };
         wrap.appendChild(resetBtn);
 
-        document.body.appendChild(wrap);
+        debugWrap = wrap;
+        document.body.appendChild(debugWrap);
       }
 
-      const urlParams = new URLSearchParams(window.location.search);
-      if (urlParams.get('debug') === 'true') {
-        createDebugUI();
-      }
+      createDebugUI();
       resize(); tick();
     })();
   </script>
