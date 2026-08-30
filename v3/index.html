@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Akshay Saini — software engineer portfolio. Selected systems, AI products, developer tools, and experiments.">
+  <title>Akshay Saini — Software Engineer</title>
+  <style>
+    :root { --bg:#0a0a0b; --panel:#121214; --line:#29292d; --text:#f4f4f2; --muted:#9b9b9f; --accent:#d7ff55; }
+    * { box-sizing:border-box; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; background:var(--bg); color:var(--text); font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; line-height:1.5; }
+    a { color:inherit; }
+    .wrap { width:min(1120px,calc(100% - 40px)); margin:auto; }
+    header { padding:28px 0; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--line); }
+    .mark { font-weight:800; letter-spacing:-.03em; text-decoration:none; }
+    nav { display:flex; gap:24px; color:var(--muted); font-size:14px; }
+    nav a { text-decoration:none; }
+    nav a:hover { color:var(--text); }
+    .hero { min-height:72vh; display:flex; align-items:center; padding:90px 0; }
+    .eyebrow { color:var(--accent); text-transform:uppercase; letter-spacing:.14em; font-size:12px; font-weight:700; }
+    h1 { font-size:clamp(56px,9vw,116px); line-height:.9; letter-spacing:-.075em; margin:18px 0 28px; max-width:900px; }
+    .lead { color:#c5c5c8; font-size:clamp(19px,2.4vw,27px); max-width:760px; line-height:1.35; }
+    .links { display:flex; gap:14px; margin-top:34px; flex-wrap:wrap; }
+    .button { border:1px solid var(--line); padding:11px 16px; border-radius:999px; text-decoration:none; font-size:14px; }
+    .button.primary { background:var(--text); color:var(--bg); border-color:var(--text); }
+    section { padding:90px 0; border-top:1px solid var(--line); }
+    .section-head { display:flex; justify-content:space-between; gap:30px; margin-bottom:40px; }
+    h2 { font-size:clamp(32px,5vw,54px); letter-spacing:-.055em; margin:0; }
+    .section-note { color:var(--muted); max-width:440px; }
+    .grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+    .card { background:var(--panel); border:1px solid var(--line); border-radius:20px; padding:26px; min-height:270px; display:flex; flex-direction:column; transition:transform .2s,border-color .2s; }
+    .card:hover { transform:translateY(-3px); border-color:#505057; }
+    .meta { display:flex; justify-content:space-between; gap:15px; color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.08em; }
+    .card h3 { font-size:28px; letter-spacing:-.04em; margin:55px 0 12px; }
+    .card p { color:#b5b5b9; margin:0 0 20px; max-width:560px; }
+    .tags { display:flex; gap:7px; flex-wrap:wrap; margin-top:auto; }
+    .tag { color:#c7c7cb; border:1px solid var(--line); border-radius:999px; padding:5px 9px; font-size:11px; }
+    .card-link { margin-top:18px; color:var(--accent); font-size:14px; text-decoration:none; }
+    .experience { display:grid; grid-template-columns:180px 1fr; gap:40px; padding:28px 0; border-top:1px solid var(--line); }
+    .experience:first-child { border-top:0; }
+    .year { color:var(--muted); font-size:14px; }
+    .experience h3 { margin:0 0 6px; font-size:23px; }
+    .experience p { margin:0; color:#aaaab0; }
+    footer { padding:50px 0 70px; color:var(--muted); display:flex; justify-content:space-between; gap:20px; }
+    @media (max-width:720px) { .wrap{width:min(100% - 28px,1120px)} nav{display:none}.hero{min-height:auto;padding:90px 0}.grid{grid-template-columns:1fr}.section-head{display:block}.section-note{margin-top:14px}.experience{grid-template-columns:1fr;gap:8px}footer{display:block}footer div+div{margin-top:12px} }
+    @media (prefers-reduced-motion:reduce) { html{scroll-behavior:auto}.card{transition:none}.card:hover{transform:none} }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header><a class="mark" href="#top">AKSHAY SAINI</a><nav><a href="#work">Work</a><a href="#experience">Experience</a><a href="#about">About</a><a href="https://github.com/anonyxhappie">GitHub</a></nav></header>
+    <main id="top">
+      <section class="hero" style="border-top:0">
+        <div><div class="eyebrow">Software Engineer · Systems · AI</div><h1>I build systems worth looking inside.</h1><p class="lead">A portfolio of software, AI products, developer tools, and technical experiments — with the architecture and implementation available to inspect.</p><div class="links"><a class="button primary" href="#work">Explore selected work</a><a class="button" href="https://github.com/anonyxhappie">View GitHub</a></div></div>
+      </section>
+      <section id="work"><div class="section-head"><h2>Selected work</h2><p class="section-note">A curated set of projects chosen for engineering depth, originality, and the questions they explore.</p></div><div id="projects" class="grid"></div></section>
+      <section id="experience"><div class="section-head"><h2>Experience</h2><p class="section-note">Professional experience should be read alongside the systems and products built outside of it.</p></div><div class="experience"><div class="year">Present</div><div><h3>Franklin Templeton · Senior Software Engineer</h3><p>Enterprise financial systems, backend/platform engineering, reliability and cloud operations.</p></div></div><div class="experience"><div class="year">Previous</div><div><h3>Secomind.ai · Senior Software Engineer</h3><p>AI-powered IoT and edge-platform engineering.</p></div></div><div class="experience"><div class="year">Previous</div><div><h3>Chingari · Senior Software Engineer</h3><p>Distributed backend systems for a large-scale social platform.</p></div></div></section>
+      <section id="about"><div class="section-head"><h2>Engineering thesis</h2><p class="section-note">The common thread across these projects is not a framework. It is building useful systems with explicit boundaries.</p></div><p class="lead">I’m interested in local-first AI, evidence-grounded decision systems, infrastructure, developer tools, data-intensive products, and interfaces that make complex systems understandable.</p></section>
+    </main>
+    <footer><div>© 2026 Akshay Saini</div><div><a href="https://github.com/anonyxhappie">GitHub</a> · <a href="https://www.linkedin.com/in/anonyxhappie/">LinkedIn</a></div></footer>
+  </div>
+  <script src="../portfolio-data.js"></script>
+  <script>
+    const root=document.getElementById('projects');
+    root.innerHTML=window.PORTFOLIO.projects.map(p=>`<article class="card"><div class="meta"><span>${p.status}</span><span>Project</span></div><h3>${p.name}</h3><p>${p.description}</p><div class="tags">${p.focus.map(t=>`<span class="tag">${t}</span>`).join('')}</div><a class="card-link" href="${p.repo}" target="_blank" rel="noopener">Inspect repository →</a></article>`).join('');
+  </script>
+</body>
+</html>
