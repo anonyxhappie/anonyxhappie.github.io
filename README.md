@@ -1,27 +1,44 @@
-# anonyxhappie.github.io
+# Akshay Saini — Portfolio
 
-Personal portfolio of **Akshay Saini** — built with a physics-based interactive UI.
+Current portfolio site for **Akshay Saini, Senior Software Engineer**.
 
-## ✨ Features
+## Current version
 
-- **Fluid canvas background** — Metaball simulation that follows your cursor
-- **Physics-powered cards** — Drag, throw, and stack cards using Matter.js
-- **Gravity toggle** — Turn gravity on/off to play with cards in zero-G
-- **Dark glassmorphism design** — Frosted glass cards on a deep navy canvas
-- **Fully responsive** — Falls back to a clean card layout on mobile
-- **Zero build step** — Pure HTML/CSS/JS, deploys directly to GitHub Pages
+**v3 — Professional Portfolio**
 
-## 🛠 Tech
+The `v1` and `v2` branches preserve previous portfolio experiments. `master` is the current production experience.
 
-- Vanilla HTML5 / CSS3 / JavaScript
-- [Matter.js](https://brm.io/matter-js/) for 2D physics
-- Canvas 2D API for fluid simulation
-- [Inter](https://fonts.google.com/specimen/Inter) typeface
+## Purpose
 
-## 🚀 Deploy
+A focused showcase of engineering work, selected projects, technical interests, and professional experience.
 
-Served from the root of this branch via GitHub Pages. Just push and it's live.
+## Featured work
 
-## 📝 License
+- [miniai](https://github.com/anonyxhappie/miniai) — local AI runtime and structured generation
+- [MindFS](https://github.com/anonyxhappie/MindFS) — local-first filesystem intelligence
+- [Nirīkṣa](https://github.com/anonyxhappie/nireeksha) — evidence-driven product decision engine
+- [MyPhotos](https://github.com/anonyxhappie/myphotos) — self-hosted photo library with semantic search and AI processing
+- [SpaceOrganiser](https://github.com/anonyxhappie/spaceorganiser) — safe local storage inspection and cleanup
+- [TypeMaestro](https://github.com/anonyxhappie/TypeMaestro) — browser-based realtime audio and local AI experience
+- [Silicon Epoch](https://github.com/anonyxhappie/silicon-epoch) — interactive visual knowledge graph of AI evolution
+- [IDBI WealthLens](https://github.com/anonyxhappie/idbiinnovate) — fintech AI proof of concept
 
-MIT
+## Experience
+
+- **Franklin Templeton** — Senior Software Engineer
+- **SecoMind.ai** — Senior Software Engineer
+- **Chingari** — Senior Software Engineer
+
+## Links
+
+- Portfolio: https://anonyxhappie.github.io
+- GitHub: https://github.com/anonyxhappie
+- LinkedIn: https://linkedin.com/in/anonyxhappie
+
+## Version history
+
+| Version | Status | Description |
+|---|---|---|
+| `v1` | Archived | Earlier portfolio experience |
+| `v2` | Archived | Physics-driven interactive portfolio |
+| `v3` | Current | Professional engineering portfolio |
