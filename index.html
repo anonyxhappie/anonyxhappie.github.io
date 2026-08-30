@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="description" content="Akshay Saini — Senior Software Engineer. Selected systems, AI experiments, product work, and engineering practice.">
+  <title>Akshay Saini — Software Engineer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="noise"></div>
+  <header class="nav">
+    <a class="brand" href="#top">AS<span>.</span></a>
+    <nav>
+      <a href="#work">Work</a>
+      <a href="#experience">Experience</a>
+      <a href="#about">About</a>
+    </nav>
+    <a class="nav-cta" href="https://github.com/anonyxhappie" target="_blank" rel="noreferrer">GitHub ↗</a>
+  </header>
+
+  <main id="top">
+    <section class="hero section">
+      <div class="eyebrow"><span class="pulse"></span> SENIOR SOFTWARE ENGINEER · INDIA</div>
+      <h1>I build <em>systems</em><br>worth exploring.</h1>
+      <p class="hero-copy">Backend engineer by trade. Product builder by instinct. I like turning complicated problems into reliable software — and then making the result surprisingly good to use.</p>
+      <div class="hero-actions">
+        <a class="button primary" href="#work">Explore selected work <span>↓</span></a>
+        <a class="button secondary" href="https://github.com/anonyxhappie" target="_blank" rel="noreferrer">View GitHub ↗</a>
+      </div>
+      <div class="hero-meta">
+        <div><span>FOCUS</span>Distributed systems · AI · developer tools</div>
+        <div><span>STACK</span>Python · Java · TypeScript · AWS · Kubernetes</div>
+        <div><span>NOW</span>Building and experimenting with AI-native products</div>
+      </div>
+    </section>
+
+    <section id="work" class="section work-section">
+      <div class="section-head">
+        <div><div class="eyebrow">01 / SELECTED WORK</div><h2>Things I’ve built.</h2></div>
+        <p>Not a repository dump. A curated set of projects that shows how I think, build, and experiment.</p>
+      </div>
+      <div class="filters" role="group" aria-label="Filter projects">
+        <button class="filter active" data-filter="all">All</button>
+        <button class="filter" data-filter="ai">AI</button>
+        <button class="filter" data-filter="systems">Systems</button>
+        <button class="filter" data-filter="product">Product</button>
+        <button class="filter" data-filter="creative">Creative</button>
+      </div>
+      <div id="projects" class="project-grid"></div>
+    </section>
+
+    <section id="experience" class="section experience-section">
+      <div class="section-head"><div><div class="eyebrow">02 / EXPERIENCE</div><h2>Production is<br>different from demos.</h2></div><p>Years spent working on software where reliability, scale, and operational reality matter.</p></div>
+      <div class="timeline">
+        <article class="role"><div class="role-year">PRESENT</div><div><h3>Franklin Templeton</h3><p class="role-title">Senior Software Engineer</p><p>Backend and platform engineering for enterprise financial systems, with an emphasis on reliability, cloud operations, and engineering velocity.</p></div></article>
+        <article class="role"><div class="role-year">PREVIOUS</div><div><h3>SecoMind.ai</h3><p class="role-title">Senior Software Engineer</p><p>Core services for AI-powered IoT and edge platforms, including telemetry pipelines and production infrastructure.</p></div></article>
+        <article class="role"><div class="role-year">PREVIOUS</div><div><h3>Chingari</h3><p class="role-title">Senior Software Engineer</p><p>Backend services for a large-scale social platform, working on throughput, resilience, and distributed systems.</p></div></article>
+      </div>
+    </section>
+
+    <section id="about" class="section about-section">
+      <div class="eyebrow">03 / ENGINEERING THESIS</div>
+      <div class="thesis"><h2>Good software is<br><em>evidence made executable.</em></h2><p>I care about the boundary between an idea and a dependable system: clear models, explicit trade-offs, observable behavior, safe automation, and interfaces that respect the person using them.</p></div>
+      <div class="skill-cloud">
+        <span>Backend Architecture</span><span>Distributed Systems</span><span>Python</span><span>Java</span><span>TypeScript</span><span>AI / LLMs</span><span>Cloud Infrastructure</span><span>AWS</span><span>GCP</span><span>Kubernetes</span><span>Docker</span><span>Observability</span><span>Linux</span><span>Web3</span><span>Solidity</span><span>Product Engineering</span>
+      </div>
+    </section>
+
+    <section class="section contact-section">
+      <div class="eyebrow">04 / LET’S CONNECT</div>
+      <h2>Have a hard problem?<br><em>Let’s build it.</em></h2>
+      <div class="contact-links"><a href="mailto:heyakshaysaini@gmail.com">heyakshaysaini@gmail.com ↗</a><a href="https://www.linkedin.com/in/anonyxhappie" target="_blank" rel="noreferrer">LinkedIn ↗</a><a href="https://github.com/anonyxhappie" target="_blank" rel="noreferrer">GitHub ↗</a></div>
+    </section>
+  </main>
+
+  <footer><span>© <span id="year"></span> Akshay Saini</span><span>PORTFOLIO · v3</span><a href="#top">Back to top ↑</a></footer>
+  <script src="app.js"></script>
+</body>
+</html>
