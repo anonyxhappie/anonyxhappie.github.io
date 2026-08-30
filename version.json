@@ -1,0 +1,7 @@
+{
+  "current": "v3",
+  "status": "production",
+  "name": "Akshay Saini — Professional Engineering Portfolio",
+  "previous": ["v1", "v2"],
+  "policy": "Major portfolio redesigns receive a new major version; historical versions remain recoverable through Git refs."
+}
