@@ -1,0 +1,15 @@
+const projects=[
+{name:'MindFS',cat:['ai','systems'],status:'BUILDING',desc:'A local-first AI filesystem intelligence layer: understand, search, organize, and act on files without giving up control.',tags:['AI','Local-first','Agent tooling'],url:'https://github.com/anonyxhappie/MindFS',featured:true},
+{name:'Nirīkṣa',cat:['ai','product'],status:'BUILDING',desc:'Evidence-driven product intelligence designed to turn messy research and competing signals into decisions you can inspect.',tags:['AI','Evidence','Product systems'],url:'https://github.com/anonyxhappie/nireeksha'},
+{name:'Silicon Epoch',cat:['creative','product'],status:'LIVE PROJECT',desc:'An interactive visual exploration of AI history, models, companies, and the accelerating evolution of the field.',tags:['Visualization','AI','Web'],url:'https://github.com/anonyxhappie/silicon-epoch'},
+{name:'MyPhotos',cat:['ai','systems'],status:'BUILDING',desc:'A self-hosted personal photo system exploring semantic search, AI processing, and private media infrastructure.',tags:['Self-hosted','Search','AI'],url:'https://github.com/anonyxhappie/myphotos'},
+{name:'SpaceOrganiser',cat:['systems','product'],status:'BUILDING',desc:'A safety-first local storage analysis and cleanup tool focused on visibility before destructive action.',tags:['Python','Filesystem','Safety'],url:'https://github.com/anonyxhappie/spaceorganiser'},
+{name:'miniai',cat:['ai','systems'],status:'EXPERIMENT',desc:'A compact local AI project exploring model execution, structured generation, and practical small-model workflows.',tags:['Local AI','LLM','Python'],url:'https://github.com/anonyxhappie/miniai'},
+{name:'TypeMaestro',cat:['creative','product'],status:'EXPERIMENT',desc:'A browser-based creative experiment combining realtime audio, interaction, and local AI-assisted experiences.',tags:['Audio','Browser','AI'],url:'https://github.com/anonyxhappie/TypeMaestro'},
+{name:'IDBI WealthLens',cat:['ai','product'],status:'PROTOTYPE',desc:'A fintech AI proof of concept exploring intelligent interfaces around financial information and decision support.',tags:['Fintech','AI','Data'],url:'https://github.com/anonyxhappie/idbiinnovate'}
+];
+const grid=document.querySelector('#projects');
+function render(filter='all'){grid.innerHTML=projects.filter(p=>filter==='all'||p.cat.includes(filter)).map((p,i)=>`<article class="project ${p.featured?'featured':''}"><span class="project-num">${String(i+1).padStart(2,'0')}</span><a class="project-link" href="${p.url}" target="_blank" rel="noreferrer">GITHUB ↗</a><div><div class="project-status">${p.status}</div><h3>${p.name}</h3><p>${p.desc}</p></div><div class="tags">${p.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div></article>`).join('');}
+document.querySelectorAll('.filter').forEach(btn=>btn.addEventListener('click',()=>{document.querySelector('.filter.active')?.classList.remove('active');btn.classList.add('active');render(btn.dataset.filter)}));
+render();
+document.querySelector('#year').textContent=new Date().getFullYear();
